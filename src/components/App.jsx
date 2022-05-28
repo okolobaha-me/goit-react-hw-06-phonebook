@@ -24,7 +24,9 @@ const App = () => {
   };
 
   const isAlreadyExist = name => {
-    return contacts.some(elem => elem.name === name);
+    return contacts.some(
+      elem => elem.name.toLowerCase() === name.toLowerCase()
+    );
   };
 
   const addContact = (name, phone) => {
