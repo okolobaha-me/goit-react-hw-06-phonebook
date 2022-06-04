@@ -1,7 +1,13 @@
-import PropTypes from 'prop-types';
 import s from './Filter.module.css';
+import { useDispatch } from 'react-redux';
+import { setFilter } from '../../redux/contactsSlice';
 
-function Filter({ value, onChange }) {
+function Filter() {
+  const dispatch = useDispatch();
+  const handleChange = e => {
+    dispatch(setFilter(e.currentTarget.value));
+  };
+
   return (
     <form className={s.filter}>
       <label className={s.filterLabel}>
@@ -9,8 +15,7 @@ function Filter({ value, onChange }) {
         <input
           type="text"
           placeholder="Whom are you looking for"
-          onChange={onChange}
-          value={value}
+          onChange={handleChange}
         />
       </label>
     </form>
@@ -18,8 +23,3 @@ function Filter({ value, onChange }) {
 }
 
 export default Filter;
-
-Filter.propTypes = {
-  onChange: PropTypes.func,
-  value: PropTypes.string,
-};

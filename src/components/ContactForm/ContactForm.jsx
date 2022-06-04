@@ -1,12 +1,38 @@
-import PropTypes from 'prop-types';
-import { Form, Formik, Field } from 'formik';
+import { Field, Form, Formik } from 'formik';
 import s from './ContactForm.module.css';
+import { useDispatch, useSelector } from 'react-redux';
+import { addContact, getContacts } from '../../redux/contactsSlice';
+import { Notify } from 'notiflix/build/notiflix-notify-aio';
+import shortID from 'shortid';
 
-export const ContactForm = ({ onSubmit }) => {
+export const ContactForm = () => {
+  const dispatch = useDispatch();
+  const contacts = useSelector(getContacts);
+
+  const isEmptyString = str => {
+    return str.length === 0;
+  };
+
+  const isAlreadyExist = name => {
+    return contacts.some(
+      elem => elem.name.toLowerCase() === name.toLowerCase()
+    );
+  };
+
   const handleSubmit = ({ name, phone }, actions) => {
-    const isSuccess = onSubmit(name, phone);
+    if (isEmptyString(name) || isEmptyString(phone)) {
+      Notify.failure("U can't add empty contact");
+      return;
+    }
+    if (isAlreadyExist(name)) {
+      Notify.failure(
+        'Contact with same name is already exist please entre new name'
+      );
+      return;
+    }
 
-    if (isSuccess) actions.resetForm();
+    dispatch(addContact({ name, phone, id: shortID.generate() }));
+    actions.resetForm();
   };
 
   return (
@@ -42,7 +68,4 @@ export const ContactForm = ({ onSubmit }) => {
   );
 };
 
-ContactForm.propTypes = {
-  onSubmit: PropTypes.func.isRequired,
-};
 export default ContactForm;
